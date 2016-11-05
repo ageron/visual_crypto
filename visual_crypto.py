@@ -1,9 +1,11 @@
 #!/usr/bin/python
 
+from __future__ import division, print_function, unicode_literals
+
 import os
 import sys
 import random
-import Image
+from PIL import Image
 import argparse
 import logging
 
@@ -17,7 +19,7 @@ def get_options():
     parser.add_argument('--resize',  '-r', metavar = "WIDTH,HEIGHT", help='resize message image (defaults to message image size). If width or height is larger than that of the secret image, the secret image will be enlarged appropriately.')
     parser.add_argument('--prepared_message', '-p',  metavar = "PREPARED_MESSAGE_IMAGE_FILE_PATH",  help='if present, the prepared message image is saved to this path')
     parser.add_argument('--display', '-d', action='store_true')
-    parser.add_argument('--verbose', '-v', action='count')
+    parser.add_argument('--verbose', '-v', action='count', default=0)
     args = parser.parse_args()
     if args.resize:
         try:
@@ -49,8 +51,8 @@ def generate_secret(size, secret_image = None):
     else:
         old_width, old_height = (-1, -1)
 
-    for x in xrange(0, 2 * width, 2):
-        for y in xrange(0, 2 * height, 2):
+    for x in range(0, 2 * width, 2):
+        for y in range(0, 2 * height, 2):
             if x < old_width and y < old_height:
                 color = secret_image.getpixel((x, y))
             else:
@@ -64,8 +66,8 @@ def generate_secret(size, secret_image = None):
 def generate_ciphered_image(secret_image, prepared_image):
     width, height = prepared_image.size
     ciphered_image = Image.new(mode = "1", size = (width * 2, height * 2))
-    for x in xrange(0, width*2, 2):
-        for y in xrange(0, height*2, 2):
+    for x in range(0, width*2, 2):
+        for y in range(0, height*2, 2):
             secret = secret_image.getpixel((x,y))
             message = prepared_image.getpixel((x/2,y/2))
             if (message > 0 and secret > 0) or (message == 0 and secret == 0):
